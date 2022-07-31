@@ -89,6 +89,7 @@
                 });
 
                 container.innerHTML = html;
+                attachEventListeners();
             }
 
             const attachEventListeners = () => {
@@ -129,7 +130,6 @@
                 }).then((data) => {
                     polls = data;
                     renderPolls();
-                    attachEventListeners();
                 });
             });
         </script>
