@@ -1,5 +1,7 @@
 <?php
 
+include_once(__DIR__ . '/permissions.php');
+
 add_action('init', function() {
 	register_post_type('poll', [
 		'labels' => [
@@ -9,7 +11,18 @@ add_action('init', function() {
 		],
 		'supports' => ['title'],
 		'show_in_menu' => true,
-		'show_ui' => true
+		'show_ui' => true,
+		'capabilities' => [
+			'publish_posts' => 'publish_polls',
+		    'edit_posts' => 'edit_polls',
+		    'edit_others_posts' => 'edit_others_polls',
+		    'delete_posts' => 'delete_polls',
+		    'delete_others_posts' => 'delete_others_polls',
+		    'read_private_posts' => 'read_private_polls',
+		    'edit_post' => 'edit_poll',
+		    'delete_post' => 'delete_poll',
+		    'read_post' => 'read_poll'
+		]
 	]);
 
 	if (function_exists('acf_add_local_field_group')) {
@@ -114,14 +127,26 @@ add_action('acf/save_post', function($id) {
 });
 
 add_action('rest_api_init', function() {
+
+	$current_user_id = get_current_user_id();
+
 	register_rest_route('api', 'polls', [
 		'methods' => 'GET',
-		'callback' => function($request) {
-			$polls = get_posts([
+		'callback' => function($request) use ($current_user_id) {
+			wp_set_current_user($current_user_id);
+			
+			$args = [
 				'post_type' => 'poll',
 				'posts_per_page' => -1,
 				'orederby' => ['date' => 'DESC', 'ID' => 'DESC']
-			]);
+			];
+
+			if (current_user_can('tester')) {
+				$ids = get_allowed_author_ids();
+				$args['author__in'] = $ids;
+			}
+
+			$polls = get_posts($args);
 
 			return array_map(function($poll) {
 				$obj = new \stdClass();
@@ -184,4 +209,15 @@ function get_percentage($value, $total, $round = 2) {
 	}
 
 	return round($value / $total * 100, $round);
+}
+
+function get_allowed_author_ids($current_user_id = 0) {
+	$ids = get_users(['role' => 'administrator', 'fields' => 'ID']);
+	if (!$current_user_id) {
+		$ids[] = get_current_user_id();
+	} else {
+		$ids[] = $current_user_id;
+	}
+
+	return $ids;
 }

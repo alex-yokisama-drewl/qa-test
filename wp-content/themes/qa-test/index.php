@@ -41,9 +41,13 @@
                 html = '';
 
                 polls.forEach((poll) => {console.log(poll);
-                    let total = poll.choices.reduce((sum, choice) => {
-                        return sum + Number.parseInt(choice.count);
-                    }, 0);
+                    let total = 0;
+                    if (poll.choices) {
+                        total = poll.choices.reduce((sum, choice) => {
+                            return sum + Number.parseInt(choice.count);
+                        }, 0);
+                    }
+
 
                     html += `
                     <div class="my-4 mx-auto card w-50" >
@@ -52,29 +56,30 @@
                             <ul class="list-group">
                     `;
 
-                    poll.choices.forEach((choice) => {
-                        html += `
-                        <li class="poll-choice list-group-item text-nowrap ${((poll.voted == choice.id) ? 'bg-primary bg-opacity-10': '')}" style="cursor: pointer" data-poll-id="${poll.id}" data-choice-id="${choice.id}">
-                            <div class="my-2 d-flex justify-content-between align-items-start">
-                                <div class="">
-                                    ${choice.text}
-                                </div>
-                        `;
-                        if (poll.voted) {console.log(choice.count / total);
-                            let percentage = Math.round(choice.count / total * 100) / 100;
-                            let width = choice.count / total * 100;
+                    if (poll.choices) {
+                        poll.choices.forEach((choice) => {
                             html += `
-                                    <span class="badge bg-primary rounded-pill">${choice.count}</span>
-                                </div>
-                                <div class="progress my-2">
-                                    <div class="progress-bar" style="width: ${width}%;">${percentage}%</div>
-                                </div>
+                            <li class="poll-choice list-group-item text-nowrap ${((poll.voted == choice.id) ? 'bg-primary bg-opacity-10': '')}" style="cursor: pointer" data-poll-id="${poll.id}" data-choice-id="${choice.id}">
+                                <div class="my-2 d-flex justify-content-between align-items-start">
+                                    <div class="">
+                                        ${choice.text}
+                                    </div>
                             `;
-                        }
+                            if (poll.voted) {console.log(choice.count / total);
+                                let percentage = Math.round(choice.count / total * 100) / 100;
+                                let width = choice.count / total * 100;
+                                html += `
+                                        <span class="badge bg-primary rounded-pill">${choice.count}</span>
+                                    </div>
+                                    <div class="progress my-2">
+                                        <div class="progress-bar" style="width: ${width}%;">${percentage}%</div>
+                                    </div>
+                                `;
+                            }
 
-                        html += `</li>`;
-
-                    });
+                            html += `</li>`;
+                        });
+                    }
 
                     html += `
                             </ul>
