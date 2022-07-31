@@ -59,7 +59,7 @@
                     if (poll.choices) {
                         poll.choices.forEach((choice) => {
                             html += `
-                            <li class="poll-choice list-group-item text-nowrap ${((poll.voted == choice.id) ? 'bg-primary bg-opacity-10': '')}" style="cursor: pointer" data-poll-id="${poll.id}" data-choice-id="${choice.id}">
+                            <li class="list-group-item text-nowrap ${poll.voted ? '' : 'poll-choice'} ${((poll.voted == choice.id) ? 'bg-primary bg-opacity-10': '')}" style="cursor: pointer" data-poll-id="${poll.id}" data-choice-id="${choice.id}">
                                 <div class="my-2 d-flex justify-content-between align-items-start">
                                     <div class="">
                                         ${choice.text}
