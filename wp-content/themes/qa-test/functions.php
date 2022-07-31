@@ -134,14 +134,14 @@ add_action('rest_api_init', function() {
 		'methods' => 'GET',
 		'callback' => function($request) use ($current_user_id) {
 			wp_set_current_user($current_user_id);
-			
+
 			$args = [
 				'post_type' => 'poll',
 				'posts_per_page' => -1,
 				'orederby' => ['date' => 'DESC', 'ID' => 'DESC']
 			];
 
-			if (current_user_can('tester')) {
+			if (!current_user_can('administrator')) {
 				$ids = get_allowed_author_ids();
 				$args['author__in'] = $ids;
 			}
