@@ -98,7 +98,7 @@
                         let poll_id = el.dataset.pollId;
                         let choice_id = el.dataset.choiceId;
 
-                        fetch(`/wp-json/api/poll?id=${poll_id}&choice_id=${choice_id}`).then(() => {
+                        fetch(`/wp-json/api/poll?id=${poll_id}&choice_id=${choice_id}&nocahce=${Date.now() + Math.random()}`).then(() => {
                             polls.forEach((poll) => {
                                 if (poll.id == poll_id) {
                                     poll.voted = choice_id;
@@ -125,7 +125,7 @@
                     });
                 });
 
-                fetch('/wp-json/api/polls').then((response) => {
+                fetch(`/wp-json/api/polls?nocahce=${Date.now() + Math.random()}`).then((response) => {
                     return response.json();
                 }).then((data) => {
                     polls = data;
