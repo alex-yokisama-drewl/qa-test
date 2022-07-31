@@ -40,7 +40,7 @@
 
                 html = '';
 
-                polls.forEach((poll) => {console.log(poll);
+                polls.forEach((poll) => {
                     let total = 0;
                     if (poll.choices) {
                         total = poll.choices.reduce((sum, choice) => {
